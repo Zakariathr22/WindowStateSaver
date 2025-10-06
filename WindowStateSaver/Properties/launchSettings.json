@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "WindowStateSaver (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "WindowStateSaver (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
