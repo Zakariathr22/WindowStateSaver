@@ -33,30 +33,33 @@ public static class WindowStateHelper
         WindowStateService.Save(state);
     }
 
-    public static void ApplySavedState(AppWindow appWindow, FrameworkElement content)
+    public static void ApplySavedState(Window window)
     {
-        double currentScale = content.XamlRoot.RasterizationScale;
-        var state = WindowStateService.Load();
-        if (state is null) return;
+        if (window.Content is FrameworkElement content)
+        {
+            double currentScale = content.XamlRoot.RasterizationScale;
+            var state = WindowStateService.Load();
+            if (state is null) return;
 
-        // adjust for DPI/scaling change
-        double scaleFactor = currentScale / state.Scale;
-        int width = (int)(state.Width * scaleFactor);
-        int height = (int)(state.Height * scaleFactor);
-        int x = state.PositionX;
-        int y = state.PositionY;
+            // adjust for DPI/scaling change
+            double scaleFactor = currentScale / state.Scale;
+            int width = (int)(state.Width * scaleFactor);
+            int height = (int)(state.Height * scaleFactor);
+            int x = state.PositionX;
+            int y = state.PositionY;
 
-        // ensure window fits display area
-        var displayArea = DisplayArea.GetFromWindowId(appWindow.Id, DisplayAreaFallback.Primary).WorkArea;
-        width = Math.Min(width, displayArea.Width);
-        height = Math.Min(height, displayArea.Height);
-        x = Math.Clamp(x, displayArea.X, displayArea.X + displayArea.Width - width);
-        y = Math.Clamp(y, displayArea.Y, displayArea.Y + displayArea.Height - height);
+            // ensure window fits display area
+            var displayArea = DisplayArea.GetFromWindowId(window.AppWindow.Id, DisplayAreaFallback.Primary).WorkArea;
+            width = Math.Min(width, displayArea.Width);
+            height = Math.Min(height, displayArea.Height);
+            x = Math.Clamp(x, displayArea.X, displayArea.X + displayArea.Width - width);
+            y = Math.Clamp(y, displayArea.Y, displayArea.Y + displayArea.Height - height);
 
-        appWindow.Move(new PointInt32(x, y));
-        appWindow.Resize(new SizeInt32(width, height));
+            window.AppWindow.Move(new PointInt32(x, y));
+            window.AppWindow.Resize(new SizeInt32(width, height));
 
-        if (state.IsMaximized)
-            (appWindow.Presenter as OverlappedPresenter)?.Maximize();
+            if (state.IsMaximized)
+                (window.AppWindow.Presenter as OverlappedPresenter)?.Maximize();
+        }
     }
 }

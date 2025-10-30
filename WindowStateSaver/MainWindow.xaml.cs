@@ -11,7 +11,7 @@ public sealed partial class MainWindow : Window
 
         if (Content is FrameworkElement content)
         {
-            content.Loaded += (_, _) => WindowStateHelper.ApplySavedState(AppWindow, content);
+            content.Loaded += (_, _) => WindowStateHelper.ApplySavedState(this);
         }
 
         Closed += (_, _) => WindowStateHelper.Save(this);
